@@ -1,13 +1,7 @@
-#!/usr/bin/python
-# Simulated Annealing (SA) is used to approximate the global optimal of the target function, 
-# it is proposed based on the idea of the physical process of annealing.
 import time
-import math
-import random
 import numpy as np
-import networkx as nx
 
-def run_SA(G, maxTime, start_time, return_str, T = 0.8, seed = 10):  
+def run_SA(G, maxTime, start_time, return_str, Temperature = 0.8, Temperature_scaler = 0.95, seed = 10):  
     np.random.seed(seed)
 
     VC_curr = [n for n in G.nodes()]
@@ -49,14 +43,14 @@ def run_SA(G, maxTime, start_time, return_str, T = 0.8, seed = 10):
 
         if len(unvisited_nodes_cand) < len(unvisited_nodes):
             delta = len(unvisited_nodes_cand) - len(unvisited_nodes) 
-            annhealing_const = np.exp(delta/T)
+            annhealing_const = np.exp(delta/Temperature)
             if np.random.rand() <= annhealing_const:
                 pass
             else:  
                 VC_curr = VC_cand.copy()
                 unvisited_nodes = unvisited_nodes_cand.copy()
         
-        T = 0.95 * T 
+        Temperature = Temperature_scaler * Temperature 
 
     print(f"SA final solution size: {len(VC_opt)}") 
     return VC_opt, return_str
