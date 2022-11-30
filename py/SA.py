@@ -1,0 +1,185 @@
+#!/usr/bin/python
+# Simulated Annealing (SA) is used to approximate the global optimal of the target function, 
+# it is proposed based on the idea of the physical process of annealing.
+import time
+import math
+import random
+import numpy as np
+import networkx as nx
+
+def run_SA(G, maxTime, start_time, return_str, T = 0.8):  
+    
+    Ginit = G.copy()
+    S = [n for n in Ginit.nodes()]
+    node_degree = [(node, degree) for node, degree in sorted(Ginit.degree(S), key=lambda item: item[1])]
+    node_idx = 0
+    while ((time.time() - start_time) < maxTime and node_idx < len(node_degree)):
+        flag = True
+        curr_node = node_degree[node_idx][0]
+        for neigh_node in Ginit.neighbors(curr_node):
+            if neigh_node not in S:
+                flag = False
+        if flag:    
+            S.remove(curr_node)            
+        node_idx += 1
+    print(f"Initial Solution size: {len(S)}")
+
+    VC_opt = S.copy()
+    unvisited_nodes = []
+    while ((time.time() - start_time) < maxTime):
+        # looking for a better solution with less vertice
+        while not unvisited_nodes:
+            return_str += f"{time.time()-start_time}, {len(S)}\n"
+            VC_opt = S.copy()
+            delete_v = np.random.choice(VC_opt)
+            for v in G.neighbors(delete_v):
+                if v not in S:
+                    unvisited_nodes.append(v)
+                    unvisited_nodes.append(delete_v)
+            S.remove(delete_v)     
+
+        S_current = S.copy()
+        unvisited_nodes_cand = unvisited_nodes.copy()
+        delete_v = np.random.choice(S)
+        for v in G.neighbors(delete_v):
+            if v not in S:
+                unvisited_nodes.append(v)
+                unvisited_nodes.append(delete_v)            
+        S.remove(delete_v)   
+
+        add_v = np.random.choice(unvisited_nodes)
+        for v in G.neighbors(add_v):
+            if v not in S:
+                unvisited_nodes.remove(v)
+                unvisited_nodes.remove(add_v)
+        S.append(add_v)
+
+        if len(unvisited_nodes_cand) < len(unvisited_nodes):
+            delta = len(unvisited_nodes_cand) - len(unvisited_nodes) 
+            p = np.exp(delta/T)
+            alpha = np.random.rand()
+            if alpha > p:    
+                S = S_current.copy()
+                unvisited_nodes = unvisited_nodes_cand.copy()
+
+        T = 0.95 * T 
+    print(f"SA solution size: {len(VC_opt)}") 
+    return VC_opt, return_str
+
+
+
+class SA:    
+    def simAnn(self, G, return_str, S, maxTime, start_time, T = 0.8):   
+        VC_opt = S.copy()
+        uncovered_edges = []
+        all_nodes = set([n for n in G.nodes()])
+        while ((time.time() - start_time) < maxTime):
+            T = 0.95 * T 
+
+            # looking for a better solution with less vertice
+            while not uncovered_edges:
+                VC_opt = S.copy()
+                return_str += f"{time.time()-start_time}, {len(VC_opt)}\n"
+                delete_v = np.random.choice(S)
+                for v in G.neighbors(delete_v):
+                    if v not in S:
+                        if v < delete_v:
+                            uncovered_edges.append((v, delete_v))
+                        else:
+                            uncovered_edges.append((delete_v, v))
+                S.remove(delete_v)     
+
+
+            # del node
+            S_current = S.copy()
+            uncovered_edges_cand = uncovered_edges.copy()
+            delete_v = np.random.choice(S)
+            for v in G.neighbors(delete_v):
+                if v not in S:
+                    if v < delete_v:
+                        uncovered_edges.append((v, delete_v))
+                    else:
+                        uncovered_edges.append((delete_v, v))
+            S.remove(delete_v)   
+
+
+            # add node
+            uncovered_nodes = all_nodes - set(S)
+            add_v = np.random.choice(list(uncovered_nodes))
+            S.append(add_v)
+            for v in G.neighbors(add_v):
+                if v not in S:
+                    if v < add_v:
+                        uncovered_edges.remove((v, add_v))
+                    else:
+                        uncovered_edges.remove((add_v, v))
+
+            # accept a new solution based on the probability which is proportional to the 
+            # difference between the quality of the best solution and the current solution, and the temperature. 
+            if len(uncovered_edges_cand) < len(uncovered_edges): 
+                p = math.exp(2*float(len(uncovered_edges_cand) - len(uncovered_edges))/T)
+                alpha = np.random.rand()
+                if alpha > p:    
+                    S = S_current.copy()
+                    uncovered_edges = uncovered_edges_cand.copy()
+
+        return VC_opt, return_str
+
+    def simulate_annealing(self, G, maxTime, start_time, return_str, T = 0.8):  
+
+        Ginit = G.copy()
+        S = [n for n in Ginit.nodes()]
+        node_degree = [(node, degree) for node, degree in sorted(Ginit.degree(S), key=lambda item: item[1])]
+        node_idx = 0
+        while ((time.time() - start_time) < maxTime and node_idx < len(node_degree)):
+            flag = True
+            curr_node = node_degree[node_idx][0]
+            for neigh_node in Ginit.neighbors(curr_node):
+                if neigh_node not in S:
+                    flag = False
+            if flag:    
+                S.remove(curr_node)            
+            node_idx += 1
+        print(f"Initial Solution size: {len(S)}")
+
+        S_ret = S.copy()
+        unvisited_nodes = []
+        while ((time.time() - start_time) < maxTime):
+            # looking for a better solution with less vertice
+            while not unvisited_nodes:
+                S_ret = S.copy()
+                return_str += f"{time.time()-start_time}, {len(S_ret)}\n"
+                delete_v = np.random.choice(S)
+                for v in G.neighbors(delete_v):
+                    if v not in S:
+                        unvisited_nodes.append(v)
+                        unvisited_nodes.append(delete_v)
+                S.remove(delete_v)     
+
+            S_current = S.copy()
+            unvisited_nodes_cand = unvisited_nodes.copy()
+            delete_v = np.random.choice(S)
+            for v in G.neighbors(delete_v):
+                if v not in S:
+                    unvisited_nodes.append(v)
+                    unvisited_nodes.append(delete_v)            
+            S.remove(delete_v)   
+
+            add_v = np.random.choice(unvisited_nodes)
+            for v in G.neighbors(add_v):
+                if v not in S:
+                    unvisited_nodes.remove(v)
+                    unvisited_nodes.remove(add_v)
+            S.append(add_v)
+
+            if len(unvisited_nodes_cand) < len(unvisited_nodes):
+                delta = len(unvisited_nodes_cand) - len(unvisited_nodes) 
+                p = np.exp(delta/T)
+                alpha = np.random.rand()
+                if alpha > p:    
+                    S = S_current.copy()
+                    unvisited_nodes = unvisited_nodes_cand.copy()
+
+            T = 0.95 * T 
+            
+        return S_ret, return_str
