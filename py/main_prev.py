@@ -8,17 +8,19 @@ import time
 import os
 import argparse
 import random
+import numpy as np
 
 opt_cutoff = {'karate':14, 'football':94, 'jazz':158, 'email':594, 'delaunay_n10':703,'netscience':899, 'power':2203,'as-22july06':3303,'hep-th':3926,'star2':4542,'star':6902}
 
 
 def main(graph, algo, cutoff, seed):
-    random.seed(seed)
+    # random.seed(seed)
+    np.random.seed(seed)
 
-    graph_name = graph.split('/')[-1].split('.')[0]
+    inst_name = graph.split('/')[-1].split('.')[0]
 
-    solution_filename = "_".join([graph_name, algo, str(cutoff), str(seed)]) + '.sol'
-    trace_filename = "_".join([graph_name, algo, str(cutoff), str(seed)]) + '.trace'
+    solution_filename = "_".join([inst_name, algo, str(cutoff), str(seed)]) + '.sol'
+    trace_filename = "_".join([inst_name, algo, str(cutoff), str(seed)]) + '.trace'
     output_dir = './output/' #'./{}_output/'.format(algo)
 
     start_time = time.time()
@@ -30,12 +32,12 @@ def main(graph, algo, cutoff, seed):
     fo = open(os.path.join(output_dir, trace_filename), 'w')
 
     if algo == 'BnB':
-        if graph_name not in opt_cutoff:
+        if inst_name not in opt_cutoff:
             return
 
         G = BnB.parse_edges(graph)
         num_vc_nodes, vc = BnB.Branch_and_Bound(
-            G, start_time, cutoff, fo, opt_cutoff[graph_name], seed)
+            G, start_time, cutoff, fo, opt_cutoff[inst_name], seed)
         fo.close()
 
         total_time = round((time.time() - start_time), 5)
@@ -48,8 +50,8 @@ def main(graph, algo, cutoff, seed):
 
     if algo == 'SA':
         G, nNodes = construct_graph(graph)
-        final_solution, return_str = run_SA(G, cutoff, start_time, return_str = "")
-        write_results(final_solution, return_str, nNodes, output_dir, trace_filename, solution_filename)
+        final_solution, return_str = run_SA(G, cutoff, start_time, return_str = "", seed = seed)
+        write_results(final_solution, return_str, nNodes, output_dir, inst_name, algo, cutoff, seed)
 
     if algo == 'approx':
         G = approx.parse_edges(graph)
@@ -96,7 +98,7 @@ if __name__ == '__main__':
     parser.add_argument('-inst', type=str, required=True, help='graph file')
     parser.add_argument('-alg', type=str, required=True,
                         help='algorithm to use')
-    parser.add_argument('-time', type=float, default=600,
+    parser.add_argument('-time', type=int, default=600,
                         required=False, help='runtime cutoff for algorithm')
     parser.add_argument('-seed', type=int, default=30,
                         required=False, help='random seed for algorithm')
