@@ -7,6 +7,7 @@ def run_SA(G, maxTime, start_time, return_str = "", Temperature = 0.8, Temperatu
 
     Input parameters: \n
         G: NetworkX graph object \n
+        maxTime: Cutoff time to stop simulation \n
         start_time: Time to keep as baseline to record performance and benchmark \n
         return_str: String that contains information to write \n
         Temperature: Temperature used in annealing \n
