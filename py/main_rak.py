@@ -32,6 +32,7 @@ def main(graph, algo, cutoff, seed):
 
     if algo == 'SA':
         G, nNodes = construct_graph(graph)
+        print(G.edges)
         final_solution, return_str = run_SA(G, cutoff, start_time, return_str = "", seed = seed)
         write_results(final_solution, return_str, nNodes, output_dir, inst_name, algo, cutoff, seed)
 

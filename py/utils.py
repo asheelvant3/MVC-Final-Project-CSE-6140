@@ -26,5 +26,5 @@ def write_results(final_solution, return_str, nNodes, output_dir, inst, method, 
     with open(os.path.join(output_dir, trace_filename), 'w') as file_trace:
         file_trace.write(return_str)
     with open(os.path.join(output_dir, solution_filename), 'w') as file_solution:
-        file_solution.write(str(nNodes) + "\n")
+        file_solution.write(f"{nNodes}\n")
         file_solution.write(','.join([str(n) for n in sorted(final_solution)]))
