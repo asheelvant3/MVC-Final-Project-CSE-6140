@@ -1,6 +1,3 @@
-# File containing an implementation of the FastVC algorithm.
-# No modifications have been made to the original algorithm, except ties are
-# broken arbitrarily instead of in favor of the older vertex.
 
 from datetime import datetime, timedelta
 from random import choice, seed
