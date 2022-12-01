@@ -1,5 +1,5 @@
 # import BnB
-from SA import run_SA
+from SA import SimulatedAnnealing
 from utils import *
 import approx
 # import GA
@@ -32,8 +32,7 @@ def main(graph, algo, cutoff, seed):
 
     if algo == 'SA':
         G, nNodes = construct_graph(graph)
-        print(G.edges)
-        final_solution, return_str = run_SA(G, cutoff, start_time, return_str = "", seed = seed)
+        final_solution, return_str = SimulatedAnnealing(G, cutoff, start_time, return_str = "", seed = seed)
         write_results(final_solution, return_str, nNodes, output_dir, inst_name, algo, cutoff, seed)
 
     if algo == 'approx':

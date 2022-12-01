@@ -1,13 +1,14 @@
 import argparse
 from importlib.resources import path
 import os
-import random
+import numpy as np
 import time
 
 import bnb
 import approx
 import ls1
-import ls2
+from ls2 import SimulatedAnnealing
+from utils import construct_graph, write_results
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-inst', type=str, required=True)
@@ -16,26 +17,12 @@ parser.add_argument('-time', type=float, default=600, required=False)
 parser.add_argument('-seed', type=int, default=30, required=False)
 args = parser.parse_args()
 
-def parse_edges(instance, G):
-        f = open(instance, "r")
-        lines = f.readlines()
-        vertices, edges, ign = lines[0].split()
-        vertices = int(vertices)
-        edges = int(edges)
-
-        for i in range(1, vertices + 1):
-            neigh_vertices = lines[i].split()
-            for vertex in neigh_vertices:
-                G.add_edge(i, int(vertex))
-
-        return G
-
 def solve(instance, method, cutoff, rand_seed):
     
     #graph from data instances
-    graph = instance.split('/')[-1].split('.')[0]
+    instance_name = instance.split('/')[-1].split('.')[0]
 
-    random.seed(rand_seed)
+    np.random.seed(rand_seed)
     
     start_time = time.time()
 
@@ -44,10 +31,10 @@ def solve(instance, method, cutoff, rand_seed):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    trace = "_".join([graph, method, str(cutoff), str(rand_seed)]) + '.trace'
+    trace = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.trace'
     ot = open(os.path.join(output_directory, trace), 'w')
 
-    solution = "_".join([graph, method, str(cutoff), str(rand_seed)]) + '.sol'
+    solution = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.sol'
 
     #execute algorithms
     if method == 'bnb':
@@ -66,9 +53,11 @@ def solve(instance, method, cutoff, rand_seed):
         f.close()
 
     elif method == 'ls1':
-        fastvc.run(instance, cutoff, rand_seed)
+        ls1.run(instance, cutoff, rand_seed)
     elif method == 'ls2':
-        pass
+        G, nNodes = construct_graph(instance)
+        VC_opt, return_str = SimulatedAnnealing(G, cutoff, start_time, return_str = "", seed = rand_seed)
+        write_results(VC_opt, return_str, nNodes, output_directory, instance_name, method, cutoff, rand_seed)
     else:
         print("Invalid method entered.")
 

@@ -16,8 +16,8 @@ def construct_graph(filename):
             G.add_edge(curr_node, neighNode)
     return G, nNodes
 
-def write_results(final_solution, return_str, nNodes, output_dir, inst, method, cutoff, randSeed):
-    if method == "SA":
+def write_results(VC_opt, return_str, nNodes, output_dir, inst, method, cutoff, randSeed):
+    if method == "ls1" or method == "ls2" or method == "SA":
         trace_filename = f"{inst}_{method}_{cutoff}_{randSeed}.trace"
         solution_filename = f"{inst}_{method}_{cutoff}_{randSeed}.sol"
     else:
@@ -27,4 +27,4 @@ def write_results(final_solution, return_str, nNodes, output_dir, inst, method, 
         file_trace.write(return_str)
     with open(os.path.join(output_dir, solution_filename), 'w') as file_solution:
         file_solution.write(f"{nNodes}\n")
-        file_solution.write(','.join([str(n) for n in sorted(final_solution)]))
+        file_solution.write(','.join([str(n) for n in sorted(VC_opt)]))

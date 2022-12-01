@@ -1,7 +1,7 @@
 import time
 import numpy as np
 
-def run_SA(G, maxTime, start_time, return_str = "", Temperature = 0.8, Temperature_scaler = 0.95, seed = 10):  
+def SimulatedAnnealing(G, maxTime, start_time, return_str = "", Temperature = 0.8, Temperature_scaler = 0.95, seed = 10):  
     """
     Function to run simulated annealing with cutoff
 
@@ -50,8 +50,8 @@ def run_SA(G, maxTime, start_time, return_str = "", Temperature = 0.8, Temperatu
         # Local Search Exploration
 
         # Save a copy of the current solution before searching
-        VC_cand = VC_curr.copy()
-        unvisited_nodes_cand = unvisited_nodes.copy()
+        VC_old = VC_curr.copy()
+        unvisited_nodes_old = unvisited_nodes.copy()
 
         # Randomly delete a node from the current VC. 
         node2remove = np.random.choice(VC_curr)
@@ -73,17 +73,17 @@ def run_SA(G, maxTime, start_time, return_str = "", Temperature = 0.8, Temperatu
         VC_curr.append(node2add)
 
         # We measure the improvement using the list of nodes that cannot be visited (delta)
-        delta = len(unvisited_nodes_cand) - len(unvisited_nodes) 
+        delta = len(unvisited_nodes_old) - len(unvisited_nodes) 
+        # If delta >= 0, we accept the new solution with probabiliity = 1
         if delta < 0:
-            # If there is improvement, we accept that with a probabiliity that is a function of this improvement (delta)
-            # and the temperature
+            # We accept the new solution with a probabiliity that is a function of delta and the temperature
             annhealing_const = np.exp(delta/Temperature)
             if np.random.rand() <= annhealing_const:
                 pass
             else:  
-                VC_curr = VC_cand.copy()
-                unvisited_nodes = unvisited_nodes_cand.copy()
-        
+                VC_curr = VC_old.copy()
+                unvisited_nodes = unvisited_nodes_old.copy()
+
         # Decrease the temperature using the scaling factor before continuing to the next iteration
         Temperature = Temperature_scaler * Temperature 
 
