@@ -13,7 +13,7 @@ from utils import construct_graph, write_results
 parser = argparse.ArgumentParser()
 parser.add_argument('-inst', type=str, required=True)
 parser.add_argument('-alg', type=str, required=True)
-parser.add_argument('-time', type=float, default=600, required=False)
+parser.add_argument('-time', type=int, default=600, required=False)
 parser.add_argument('-seed', type=int, default=30, required=False)
 args = parser.parse_args()
 
