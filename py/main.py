@@ -66,7 +66,7 @@ def solve(instance, method, cutoff, rand_seed):
         f.close()
 
     elif method == 'ls1':
-        pass
+        fastvc.run(instance, cutoff, rand_seed)
     elif method == 'ls2':
         pass
     else:
