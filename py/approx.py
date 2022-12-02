@@ -7,6 +7,17 @@ from collections import defaultdict
 import networkx
 import time
 
+class MVC:
+    def __init__(self, mvc, vcn):
+        self.mvc = mvc
+        self.vcn = vcn
+
+    def set_vcn(self, vcn):
+        self.vcn = vcn
+
+    def get_vcn(self):
+        return self.vcn
+
 class Graph:
     def __init__(self):
         self.vertices = 0
@@ -24,7 +35,7 @@ class Graph:
             neigh_vertices = lines[i].split()
             for vertex in neigh_vertices:
                 G.add_edge(i, int(vertex))
-
+        # print("graph", G.nodes())
         self.graph = G
 
 #implement maximum degree greedy algorithm 
@@ -35,12 +46,14 @@ def max_degree_greedy(G, start, cutoff):
     current = time.time()
     mvc = set()
 
-    while current - start < cutoff and degrees[v_max_degree]: 
+    while current - start < cutoff and degrees[v_max_degree] > 0: 
         mvc.add(v_max_degree)
-
+        # G.remove_node(v_max_degree)
+        # del degrees[v_max_degree]
+        # degrees = dict(G.degree())
+        # print("mvc", mvc)
         for neigh in G.neighbors(v_max_degree):
             degrees[neigh] = degrees[neigh] - 1
-
         degrees[v_max_degree] = 0
         v_max_degree = max(degrees, key=degrees.get)
 
@@ -58,3 +71,4 @@ def solve(instance, cutoff):
 
     #return minimum vertex cover, vertex covering number, and runtime of the algorithm
     return mvc, vcn,  str('{:f}'.format(runtime))
+
