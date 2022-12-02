@@ -17,7 +17,7 @@ def construct_graph(filename):
     return G, nNodes
 
 def write_results(VC_opt, return_str, nNodes, output_dir, inst, method, cutoff, randSeed = 0):
-    if method == "ls1" or method == "ls2" or method == "SA":
+    if method == "ls1" or method == "ls2":
         trace_filename = f"{inst}_{method}_{cutoff}_{randSeed}.trace"
         solution_filename = f"{inst}_{method}_{cutoff}_{randSeed}.sol"
     else:
