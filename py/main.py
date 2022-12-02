@@ -38,9 +38,9 @@ def solve(instance, method, cutoff, rand_seed):
 
     #execute algorithms
     if method == 'bnb':
-        g, _ = construct_graph(instance)
+        g = construct_graph(instance)
         Sol, Track = bnb.BranchBound(g, cutoff)
-        write_results(Sol, Track, len(Sol), output_directory, instance_name, method, cutoff, rand_seed)
+        write_results(Sol, Track, output_directory, instance_name, method, cutoff, rand_seed)
     elif method == 'approx':
         mvc, vcn, total_time = approx.solve(instance, cutoff)
 
