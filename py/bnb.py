@@ -90,8 +90,6 @@ def LowerBound(SubG):
         e = list(G.edges()).pop()
         G.remove_nodes_from([e[0],e[1]])
         lb += 1
-<<<<<<< HEAD
     return lb  
-=======
-    return lb  
->>>>>>> 755a0898f7dea2ed8cbddfdbdde36672d5e3fde2
+ 
+
