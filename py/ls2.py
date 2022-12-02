@@ -1,6 +1,31 @@
 import time
 import numpy as np
 
+def greedy(G, VC_curr, maxTime, start_time):
+    """
+    Function to find a greedy vertex cover solution from a given set of potential vertex covers
+
+    Input Parameters: \n
+        G: NetworkX graph object \n
+        VC_curr: Current vertex cover \n
+        maxTime: Cutoff time to stop simulation \n
+        start_time: Time to keep as baseline to record performance and benchmark \n
+
+    Output: \n
+        A list of nodes that forms a greedy optimal vertex cover \n
+    """
+    node_degree = [(node, degree) for node, degree in sorted(G.degree(VC_curr), key=lambda item: item[1])]
+    node_idx = 0
+    # For each node sorted by degree, check if its neighbors are in the current VC.
+    # If the node has neighbors in the current VC, you can safely remove the node from VC as it will still cover all edges.
+    while ((time.time() - start_time) < maxTime) and (node_idx < len(node_degree)):
+        curr_node = node_degree[node_idx][0]
+        isRemove = [1 for neigh_node in G.neighbors(curr_node) if neigh_node not in VC_curr]
+        if not len(isRemove):    
+            VC_curr.remove(curr_node)            
+        node_idx += 1
+    return VC_curr
+
 def SimulatedAnnealing(G, maxTime, start_time, return_str = "", Temperature = 0.8, Temperature_scaler = 0.95, seed = 10):  
     """
     Function to run simulated annealing with cutoff
@@ -15,25 +40,24 @@ def SimulatedAnnealing(G, maxTime, start_time, return_str = "", Temperature = 0.
         Seed: Random seed \n
     
     Output: \n
-        VC_opt: A list of nodes that forms an optimal vertex cover \n
-        return_str: String that contains information to write \n
+        A list of nodes that forms an optimal vertex cover \n
+        String that contains information to write \n
     """
     np.random.seed(seed)
 
     VC_curr = [n for n in G.nodes()] # Initialize the current VC with set of all nodes
-    node_degree = [(node, degree) for node, degree in sorted(G.degree(VC_curr), key=lambda item: item[1])]
-    node_idx = 0
-    # For each node sorted by degree, check if its neighbors are in the current VC.
-    # If the node has neighbors in the current VC, you can safely remove the node from VC as it will still cover all edges.
-    while ((time.time() - start_time) < maxTime) and (node_idx < len(node_degree)):
-        curr_node = node_degree[node_idx][0]
-        isRemove = [1 for neigh_node in G.neighbors(curr_node) if neigh_node not in VC_curr]
-        if not len(isRemove):    
-            VC_curr.remove(curr_node)            
-        node_idx += 1
-
     unreachable_nodes = []
     while ((time.time() - start_time) < maxTime):
+        # When Temperature is equal to zero, we return the greedy solution from the current vertex cover
+        if Temperature == 0:
+            VC_curr_can = greedy(G.copy(), VC_curr.copy(), maxTime, start_time)
+            if len(VC_curr_can)  < len(VC_curr):
+                return_str += f"{time.time()-start_time}, {len(VC_curr)}\n"
+                VC_opt = VC_curr_can
+            else:
+                VC_opt = VC_curr
+            return VC_opt, return_str
+
         # First find the possible nodes we can remove and shift them to the list of unreachable_nodes
         while len(unreachable_nodes) == 0:
             return_str += f"{time.time()-start_time}, {len(VC_curr)}\n"
