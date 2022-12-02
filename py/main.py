@@ -1,4 +1,5 @@
 import argparse
+from asyncore import write
 from importlib.resources import path
 import os
 import numpy as np
@@ -31,11 +32,6 @@ def solve(instance, method, cutoff, rand_seed):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    trace = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.trace'
-    ot = open(os.path.join(output_directory, trace), 'w')
-
-    solution = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.sol'
-
     #execute algorithms
     if method == 'bnb':
         g = construct_graph(instance)
@@ -43,13 +39,15 @@ def solve(instance, method, cutoff, rand_seed):
         write_results(Sol, Track, output_directory, instance_name, method, cutoff, rand_seed)
     elif method == 'approx':
         mvc, vcn, total_time = approx.solve(instance, cutoff)
+        c = str(cutoff)
+        s = str(rand_seed)
 
-        path_sol = os.path.join(output_directory, solution)
+        path_sol = os.path.join(output_directory, "_".join([instance_name, method, c, s]) + '.sol')
         f = open(path_sol, 'w')
         f.write(vcn + "\n" + mvc)
         f.close()
 
-        path_trace = os.path.join(output_directory, trace)
+        path_trace = os.path.join(output_directory, "_".join([instance_name, method, c, s]) + '.trace')
         f = open(path_trace, 'w')
         f.write(', '.join([total_time, vcn]))
         f.close()
