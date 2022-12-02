@@ -91,3 +91,5 @@ def LowerBound(SubG):
         G.remove_nodes_from([e[0],e[1]])
         lb += 1
     return lb  
+ 
+
