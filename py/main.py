@@ -38,7 +38,9 @@ def solve(instance, method, cutoff, rand_seed):
 
     #execute algorithms
     if method == 'bnb':
-        pass
+        g = construct_graph(instance)
+        Sol, Track = bnb.BranchBound(g, cutoff)
+        write_results(Sol, Track, output_directory, instance_name, method, cutoff, rand_seed)
     elif method == 'approx':
         mvc, vcn, total_time = approx.solve(instance, cutoff)
 
@@ -55,10 +57,10 @@ def solve(instance, method, cutoff, rand_seed):
     elif method == 'ls1':
         ls1.run(instance, cutoff, rand_seed)
     elif method == 'ls2':
-        G, nNodes = construct_graph(instance)
+        G = construct_graph(instance)
         VC_opt, return_str = SimulatedAnnealing(G, cutoff, start_time, return_str = "", seed = rand_seed)
-        write_results(VC_opt, return_str, nNodes, output_directory, instance_name, method, cutoff, rand_seed)
+        write_results(VC_opt, return_str, output_directory, instance_name, method, cutoff, rand_seed)
     else:
-        print("Invalid method entered.")
+        print("Invalid method entered. Please enter one of [bnb|approx|ls1|ls2].")
 
 solve(args.inst, args.alg, args.time, args.seed)
