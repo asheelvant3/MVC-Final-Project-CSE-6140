@@ -39,7 +39,6 @@ def BranchBound(Graph, Cutoff):
             if VC_Size < BestVC_Size:
                 BestVC = VC.copy()
                 BestVC_Size = VC_Size
-                print("reached a solution: ", VC_Size, time.time()-StartTime)
                 track_sols.append((VC_Size, time.time()-StartTime))
             backtrack = True 
 
