@@ -1,13 +1,13 @@
-import argparse
 import networkx as nx
 import time
-import os
+import math
+import approx
 
 def BranchBound(Graph, Cutoff):
     StartTime = time.time()
     backtrack = False #set to True when we reach a pruned node or leaf
     BestVC = [] #Best Vertex Cover so far
-    BestVC_Size = Graph.number_of_nodes() #Upper Bound = Size of best Vertex Cover so far ; Initially = total number of nodes
+    BestVC_Size = Graph.number_of_nodes() #Upper Bound = Size of best Vertex Cover so far; Initially = total number of nodes
     VC = [] #Vertex Cover, contains (node, in VC? 0/1)
     F = [] #Frontier Stack, contains (node, in VC? 0/1, (parent node, in VC? 0/1)) 
     SubG = Graph.copy() #Current sub problem; Initially = full graph
@@ -23,7 +23,7 @@ def BranchBound(Graph, Cutoff):
     TimeSoFar = 0
     while F and TimeSoFar < Cutoff:
         (candidate_node, in_VC, _) = F.pop() 
-        
+        backtrack = False #set to True when we reach a pruned node or leaf
         if in_VC: #if we add cand to VC, we can delete it from our subproblem
             SubG.remove_node(candidate_node)
         else: #if we don't add cand to VC, we have to add all of cand's neighbours to VC
@@ -39,8 +39,8 @@ def BranchBound(Graph, Cutoff):
             if VC_Size < BestVC_Size:
                 BestVC = VC.copy()
                 BestVC_Size = VC_Size
-                #print("reached a solution: ", VC_Size)
-                track_sols.append((VC_Size, time.time()-StartTime)) #can directly write to trace file here 
+                print("reached a solution: ", VC_Size, time.time()-StartTime)
+                track_sols.append((VC_Size, time.time()-StartTime))
             backtrack = True 
 
         #reached a partial solution 
@@ -80,16 +80,6 @@ def BranchBound(Graph, Cutoff):
 
     return [x[0] for x in BestVC if x[1] == 1], return_str
 
-def LowerBound(SubG):
-    #maximum matching
-    #lb = len(nx.max_weight_matching(graph))/2 
-    #maximal matching
-    lb = 0 
-    G = SubG.copy()
-    while list(G.edges()):
-        e = list(G.edges()).pop()
-        G.remove_nodes_from([e[0],e[1]])
-        lb += 1
-    return lb  
- 
-
+def LowerBound(SubG): #uses ln(max degree) approx
+    _, x = approx.max_degree_greedy(SubG, 0, 600)
+    return int(x)/math.log((max(2, max(SubG.degree, key = lambda x: x[1])[1])))
