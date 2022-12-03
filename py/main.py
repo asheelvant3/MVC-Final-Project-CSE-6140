@@ -51,7 +51,17 @@ def solve(instance, method, cutoff, rand_seed):
         f.close()
 
     elif method == 'ls1':
-        ls1.run(instance, cutoff, rand_seed)
+        solution = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.sol'
+        trace = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.trace'
+        path_sol = os.path.join(output_directory, solution)
+        n,vc,runtime=ls1.run(instance, cutoff, rand_seed)
+        f = open(path_sol, 'w')
+        f.write(n + "\n" + vc)
+        f.close()
+        path_trace = os.path.join(output_directory, trace)
+        f = open(path_trace, 'w')
+        f.write(', '.join([runtime, vc]))
+        f.close()
     elif method == 'ls2':
         G = construct_graph(instance)
         VC_opt, return_str = SimulatedAnnealing(G, cutoff, start_time, return_str = "", seed = rand_seed)
