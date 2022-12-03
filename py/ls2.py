@@ -59,6 +59,7 @@ def SimulatedAnnealing(G, maxTime, start_time, return_str = "", Temperature = 0.
             return VC_opt, return_str
 
         # First find the possible nodes we can remove and shift them to the list of unreachable_nodes
+        # We check if length of unreachable nodes is zero because in that case, we have a vertex cover
         while len(unreachable_nodes) == 0:
             return_str += f"{time.time()-start_time}, {len(VC_curr)}\n"
             VC_opt = VC_curr.copy() # Assign the optimal VC to the current VC
