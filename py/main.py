@@ -1,5 +1,4 @@
 import argparse
-from importlib.resources import path
 import os
 import numpy as np
 import time
