@@ -18,11 +18,11 @@ def construct_graph(filename):
 
 def write_results(VC_opt, return_str, output_dir, inst, method, cutoff, randSeed = 0):
     if method == "ls1" or method == "ls2":
-        trace_filename = f"{inst}_{method}_{int(cutoff)}_{randSeed}.trace"
-        solution_filename = f"{inst}_{method}_{int(cutoff)}_{randSeed}.sol"
+        trace_filename = f"{inst}_{method}_{cutoff}_{randSeed}.trace"
+        solution_filename = f"{inst}_{method}_{cutoff}_{randSeed}.sol"
     else:
-        trace_filename = f"{inst}_{method}_{int(cutoff)}.trace"
-        solution_filename = f"{inst}_{method}_{int(cutoff)}.sol"
+        trace_filename = f"{inst}_{method}_{cutoff}.trace"
+        solution_filename = f"{inst}_{method}_{cutoff}.sol"
     with open(os.path.join(output_dir, trace_filename), 'w') as file_trace:
         file_trace.write(return_str)
     with open(os.path.join(output_dir, solution_filename), 'w') as file_solution:
