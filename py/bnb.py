@@ -1,3 +1,18 @@
+'''
+This file contains the implementation of a Branch and Bound algorithm to solve the Minimum Vertex Cover Problem. 
+
+To run this file, run the following command
+python py/main.py -inst <graph file name> -alg bnb -time <cutoff time>
+
+Branch and Bound algorithm works by maintaining a state space tree and branching and bounding (pruning) this tree to find the optimal solution. 
+Our choices of pruning conditions and of the nodes to expand on greatly influence the efficiency of the algorithm.
+
+Implementation choices: 
+Upper Bound - size of Best Vertex Cover found so far
+Lower Bound - 3 options have been provided: Maximum Matching, Maximal Matching, Maximum Degree Greedy. Maximal Matching has been found to be the best choice.
+Choosing node to expand: Maximum degree node from subproblem
+'''
+
 import networkx as nx
 import time
 import math
