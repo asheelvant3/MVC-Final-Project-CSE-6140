@@ -50,10 +50,10 @@ def solve(instance, method, cutoff, rand_seed):
         f.close()
 
     elif method == 'ls1':
-        solution = "_".join([instance_name, method, str(cutoff), str(i)]) + '.sol'
-        trace = "_".join([instance_name, method, str(cutoff), str(i)]) + '.trace'
+        solution = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.sol'
+        trace = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.trace'
         path_sol = os.path.join(output_directory, solution)
-        n,vc,runtime=ls1.run(instance, cutoff, i)
+        n,vc,runtime=ls1.run(instance, cutoff, rand_seed)
         f = open(path_sol, 'w')
         f.write(n + "\n" + vc)
         f.close()
