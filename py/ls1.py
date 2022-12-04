@@ -27,8 +27,8 @@ def fast_vc(graph, cutoff_time, random_seed):
     # print(edges)
     leng=max(graph)+1
     vertex_cover = [0] * leng
-    return_tr+=f"{time.time()-start_time}, {len(vertex_cover)}\n"
-    print("VC1",len(vertex_cover))
+    # return_tr+=f"{time.time()-start_time}, {len(vertex_cover)}\n"
+    # print("VC1",len(vertex_cover))
     size=len(vertex_cover)
     loss = [0] * size
     gain = [0] * size
@@ -41,7 +41,7 @@ def fast_vc(graph, cutoff_time, random_seed):
             else:
                 ind=v
             vertex_cover[ind] = 1
-    return_tr+=f"{time.time()-start_time}, {sum(vertex_cover)}\n"
+    # return_tr+=f"{time.time()-start_time}, {sum(vertex_cover)}\n"
     for u, v in edges: # changing loss values for vertices included in vertex_cover
         temp1=vertex_cover[u]
         temp2=vertex_cover[v]
@@ -58,7 +58,7 @@ def fast_vc(graph, cutoff_time, random_seed):
             else:
                 ed.append((v,u))
     edges=set(ed)
-    print("VC",sum(vertex_cover))
+    # print("VC",sum(vertex_cover))
     calc,runtime=calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges,return_tr)
     t=[]
     t=','.join([str(i + 1) for i in range(len(calc)) if calc[i] == 1]) #getting the list of vertices
@@ -80,13 +80,13 @@ def calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges,return
                     is_VC =False
         if is_VC: 
             calc = [i for i in vertex_cover] #get the vertex with minimum loss and remove it
-            # return_tr += f"{time.time()-start_time}, {sum(calc)}\n"
+            return_tr += f"{time.time()-start_time}, {sum(calc)}\n"
             l=[i for i in range(len(vertex_cover))]
             min_loss = min(l,key=lambda i: 999999 if vertex_cover[i] == 0 else loss[i])
             vertex_cover[min_loss] = 0
             gain[min_loss] = 0
             gain,loss=operation(graph,vertex_cover,min_loss,1,loss,gain)
-        return_tr += f"{time.time()-start_time}, {sum(vertex_cover)}\n"
+        # return_tr += f"{time.time()-start_time}, {sum(vertex_cover)}\n"
         print(f"{time.time()-start_time}, {sum(vertex_cover)}\n")
         indices=[]
         for i in range(len(vertex_cover)):
