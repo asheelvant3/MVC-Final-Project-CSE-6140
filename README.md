@@ -14,7 +14,9 @@ Python version 3.9.6 is used for the code.
 # Run the executable
 To run the code, use the following command:
 
+```
 python py/main.py -inst <filename> -alg [bnb|approx|ls1|ls2] -time <cutoff in seconds> -seed <random seed>
+```
 
 seed is an optional argument, since Branch and Bound and Approx algorithms don't need to use it. 
 
