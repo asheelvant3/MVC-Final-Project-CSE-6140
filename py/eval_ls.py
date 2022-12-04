@@ -9,11 +9,11 @@ parser.add_argument('-alg', type=str, required=True)
 args = parser.parse_args()
 
 output_dir = 'output'
-# dataset_names = ["as-22july06", "email", "football", "hep-th", "jazz", 
-#                 "karate", "netscience", "power", "star", "star2", "delaunay_n10"]
+dataset_names = ["as-22july06", "delaunay_n10", "email", "football", "hep-th", "jazz", 
+                "karate", "netscience", "power", "star", "star2"]
 # dataset_names = ["as-22july06", "delaunay_n10", "email", "football", "hep-th", "jazz", 
 #                 "karate", "netscience"]
-dataset_names = ["star", "star2", "power"]
+# dataset_names = ["star", "star2", "power"]
 
 data_results = {k:None for k in dataset_names}
 if args.alg == "ls1" or args.alg == "ls2":
