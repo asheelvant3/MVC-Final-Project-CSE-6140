@@ -10,7 +10,7 @@ $ pip install numpy
 Python version 3.9.6 is used for the code.
 
 # Run the executable
-To run the code, please use the following command:
+To run the code, please use the following commands:
 
 python -inst <filename> -alg [bnb|approx|ls1|ls2] -time <cutoff in seconds> -seed <random seed>
 
