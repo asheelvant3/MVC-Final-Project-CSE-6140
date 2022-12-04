@@ -79,6 +79,20 @@ def BranchBound(Graph, Cutoff):
 
     return [x[0] for x in BestVC if x[1] == 1], return_str
 
-def LowerBound(SubG): #uses ln(max degree) approx
-    _, x = approx.max_degree_greedy(SubG, 0, 600)
-    return int(x)/math.log((max(2, max(SubG.degree, key = lambda x: x[1])[1])))
+def LowerBound(SubG):
+    #Choice 1: Lower Bound from Approx Algo 1 - Maximal Matching
+    #found to be the best performing
+    lb = len(nx.maximal_matching(SubG))
+
+    #Choice 2: Lower Bound from Approx Algo 2 - Maximum Matching
+    # lb = 0
+    # Gcopy = SubG.copy()
+    # while list(Gcopy.edges()):
+    #     x = list(Gcopy.edges()).pop()
+    #     Gcopy.remove_nodes_from([x[0], x[1]])
+    #     lb += 1
+
+    #Choice 3: Lower Bound from Approx Algo 3 - Maximum Degree Greedy
+    # _, x = approx.max_degree_greedy(SubG, 0, 600)
+    # lb = int(x)/math.log((max(2, max(SubG.degree, key = lambda x: x[1])[1])))
+    return lb
