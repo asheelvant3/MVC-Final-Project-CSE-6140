@@ -1,3 +1,7 @@
+#This program is an implementation of FastVC algorithm.This algorithm was implemented according to the paper.
+# The only modification is that the serach for the uncovered edge is chosen based on the loss parameter instead of using choosing random edge and then checking loss.
+# Ties are broken arbitrarily.
+
 from datetime import datetime, timedelta
 from random import choice, seed
 from itertools import chain
