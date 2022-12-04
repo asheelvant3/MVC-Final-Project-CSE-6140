@@ -40,21 +40,24 @@ class Graph:
 
 #implement maximum degree greedy algorithm 
 def max_degree_greedy(G, start, cutoff):
-    degrees = dict(G.degree())
-    v_max_degree = max(degrees, key=degrees.get)
+    degrees = dict(G.degree())  #find degrees for each vertex and store in a dictionary
+    v_max_degree = max(degrees, key=degrees.get)    #find max degree in the graph
 
     current = time.time()
     mvc = set()
 
-    while current - start < cutoff and degrees[v_max_degree] > 0: 
-        mvc.add(v_max_degree)
+    while current - start < cutoff and degrees[v_max_degree] > 0:   
+        mvc.add(v_max_degree)   #add max degree to our vertex cover
+
+        #remove node method 
         # G.remove_node(v_max_degree)
-        # del degrees[v_max_degree]
         # degrees = dict(G.degree())
-        # print("mvc", mvc)
+        # v_max_degree = max(degrees, key=degrees.get)
+
+        #update degree to -1 to remove node from consideration method
         for neigh in G.neighbors(v_max_degree):
-            degrees[neigh] = degrees[neigh] - 1
-        degrees[v_max_degree] = 0
+            degrees[neigh] = degrees[neigh] - 1 
+        degrees[v_max_degree] = -1  #efficient way to mimic removal of a node
         v_max_degree = max(degrees, key=degrees.get)
 
     return str(mvc), str(len(mvc))
@@ -62,10 +65,11 @@ def max_degree_greedy(G, start, cutoff):
 def solve(instance, cutoff):
     G = Graph()
     G.parse(instance, networkx.Graph())
-    print(G.graph.edges)
+    # print(G.graph.edges)
     start = time.time()
+    # call the maximum degree greedy algorithm
     mvc, vcn = max_degree_greedy(G.graph, start, cutoff)
-    print("MVC", mvc)
+    # print("MVC", mvc)
     runtime = time.time() - start
     print("runtime for approximation algorithm:", str(runtime))
 

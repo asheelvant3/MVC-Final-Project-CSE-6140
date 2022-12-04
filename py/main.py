@@ -38,14 +38,13 @@ def solve(instance, method, cutoff, rand_seed):
     elif method == 'approx':
         mvc, vcn, total_time = approx.solve(instance, cutoff)
         c = str(cutoff)
-        s = str(rand_seed)
 
-        path_sol = os.path.join(output_directory, "_".join([instance_name, method, c, s]) + '.sol')
+        path_sol = os.path.join(output_directory, "_".join([instance_name, method, c]) + '.sol')
         f = open(path_sol, 'w')
         f.write(vcn + "\n" + mvc)
         f.close()
 
-        path_trace = os.path.join(output_directory, "_".join([instance_name, method, c, s]) + '.trace')
+        path_trace = os.path.join(output_directory, "_".join([instance_name, method, c]) + '.trace')
         f = open(path_trace, 'w')
         f.write(', '.join([total_time, vcn]))
         f.close()
