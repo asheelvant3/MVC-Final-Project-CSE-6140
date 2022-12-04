@@ -12,7 +12,11 @@ $ pip install numpy
 Python version 3.9.6 is used for the code.
 
 # Run the executable
+<<<<<<< HEAD
 To run the code, use the following command:
+=======
+To run the code, please use the following commands:
+>>>>>>> dca263a1421ee948495663db50f2b4aca4437a35
 
 python -inst <filename> -alg [bnb|approx|ls1|ls2] -time <cutoff in seconds> -seed <random seed>
 
