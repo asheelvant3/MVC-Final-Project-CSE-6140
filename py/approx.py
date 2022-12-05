@@ -4,6 +4,7 @@
 #to the MVC. The length of our MVC set will be the Vertex Covering Number (VCN).
 
 from collections import defaultdict
+import matplotlib.pyplot as plt
 import networkx
 import time
 
