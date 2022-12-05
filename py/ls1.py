@@ -36,7 +36,7 @@ def fast_vc(graph, cutoff_time, random_seed):
     size=len(vertex_cover)
     loss = [0] * size
     gain = [0] * size
-    for u, v in edges: #including all the vertices in the grapgh by adding the edges
+    for u, v in edges: #including all the vertices in the graph by adding the edges
         temp1=vertex_cover[u]
         temp2=vertex_cover[v]
         if temp1+temp2== 0:
@@ -54,7 +54,7 @@ def fast_vc(graph, cutoff_time, random_seed):
                 loss[v] += 1
             else:
                 loss[u] += 1
-    vertex_cover,graph,loss=removal_edges(graph,vertex_cover,loss)
+    vertex_cover,graph,loss=removal_edges(graph,vertex_cover,loss) #removing unecessary vertices from the graph
     for u in graph:
         for v in graph[u]:
             if u<v:
@@ -86,7 +86,7 @@ def calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges,return
             calc = [i for i in vertex_cover] #get the vertex with minimum loss and remove it
             return_tr += f"{time.time()-start_time}, {sum(calc)}\n"
             l=[i for i in range(len(vertex_cover))]
-            min_loss = min(l,key=lambda i: 999999 if vertex_cover[i] == 0 else loss[i])
+            min_loss = min(l,key=lambda i: 999999 if vertex_cover[i] == 0 else loss[i]) #getting the vertex with min loss
             vertex_cover[min_loss] = 0
             gain[min_loss] = 0
             gain,loss=operation(graph,vertex_cover,min_loss,1,loss,gain)
@@ -97,7 +97,7 @@ def calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges,return
             if vertex_cover[i]==1:
                 indices.append(i)
         best_ind = indices[0]
-        for i in range(50): #picking vertex with minimum loss and removing it
+        for i in range(50): #picking vertex with minimum loss and removing it, we use 50 as a constant loop variable as suggested in the paper.
             ch = choice(indices)
             if loss[best_ind]>=loss[ch]:
                 best_ind=ch
@@ -119,15 +119,15 @@ def calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges,return
                         flag=False
                         break
             first+=1
-        if (flag==False):
-                u = max(x, y, key=lambda x: gain[x])
+        if (flag==False): #an edge has been found that is uncovered
+                u = max(x, y, key=lambda x: gain[x]) #picking the most connected vertex based on the gain value
                 vertex_cover[u] = 1
                 gain,loss=operation(graph,vertex_cover,u,0,loss,gain) #update loss and gain after adding vertex
 
         
         curr_time = time.time()
     return calc,return_tr
-def read_graph(filename):
+def read_graph(filename):  #read graph class
     graph = {}
     with open(filename, 'r') as file:
         file.readline()
@@ -141,7 +141,7 @@ def read_graph(filename):
 def operation(graph,vertex_cover,ind,val,loss,gain):
     # print(graph)
     if val==1:
-        for v in graph[ind]: #the loss and gain of all neighbors is assigned to min loss cause egdes are uncovered
+        for v in graph[ind]: #the loss and gain of all neighbors is assigned to min loss cause egdes are uncovered when vertex is removed
                 if vertex_cover[v] == 0:gain[v] += 1
                 else:loss[v] += 1
                     
