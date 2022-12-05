@@ -91,7 +91,7 @@ def calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges,return
             gain[min_loss] = 0
             gain,loss=operation(graph,vertex_cover,min_loss,1,loss,gain)
         # return_tr += f"{time.time()-start_time}, {sum(vertex_cover)}\n"
-        print(f"{time.time()-start_time}, {sum(vertex_cover)}\n")
+#         print(f"{time.time()-start_time}, {sum(vertex_cover)}\n")
         indices=[]
         for i in range(len(vertex_cover)):
             if vertex_cover[i]==1:
