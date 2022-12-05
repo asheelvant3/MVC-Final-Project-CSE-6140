@@ -50,16 +50,16 @@ def solve(instance, method, cutoff, rand_seed):
         f.close()
 
     elif method == 'ls1':
-        solution = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.sol'
-        trace = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.trace'
-        path_sol = os.path.join(output_directory, solution)
+        solution_filename = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.sol'
+        trace_name = "_".join([instance_name, method, str(cutoff), str(rand_seed)]) + '.trace'
+        path_sol = os.path.join(output_directory, solution_filename)
         n,vc,runtime=ls1.run(instance, cutoff, rand_seed)
         f = open(path_sol, 'w')
         f.write(n + "\n" + vc)
         f.close()
-        path_trace = os.path.join(output_directory, trace)
+        path_trace = os.path.join(output_directory, trace_name)
         f = open(path_trace, 'w')
-        f.write(', '.join([runtime, vc]))
+        f.write(', '.join([runtime]))
         f.close()
     elif method == 'ls2':
         G = construct_graph(instance)

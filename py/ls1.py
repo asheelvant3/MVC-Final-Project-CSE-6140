@@ -1,7 +1,13 @@
+#This program is an implementation of FastVC algorithm.This algorithm was implemented according to the paper.
+# The only modification is that the serach for the uncovered edge is chosen based on the loss parameter instead of using choosing random edge and then checking loss.
+# Ties are broken arbitrarily.
+
 from datetime import datetime, timedelta
 from random import choice, seed
 from itertools import chain
 import networkx as nx 
+import time
+
 def removal_edges(graph,vertex_cover,loss):
     for i in range(len(vertex_cover)): #removing vertices with loss 0
         if loss[i] == 0: vertex_cover[i] = 0
@@ -9,8 +15,9 @@ def removal_edges(graph,vertex_cover,loss):
             for j in graph[i]:loss[j] = loss[j]+1
     return vertex_cover,graph,loss
 def fast_vc(graph, cutoff_time, random_seed):
+    return_tr=""
     seed(random_seed)
-    start_time = datetime.now()
+    start_time = time.time()
     inf = float('inf')
     ed=[]
     calc = None
@@ -24,10 +31,12 @@ def fast_vc(graph, cutoff_time, random_seed):
     # print(edges)
     leng=max(graph)+1
     vertex_cover = [0] * leng
+    # return_tr+=f"{time.time()-start_time}, {len(vertex_cover)}\n"
+    # print("VC1",len(vertex_cover))
     size=len(vertex_cover)
     loss = [0] * size
     gain = [0] * size
-    for u, v in edges: #including all the vertices in the grapgh by adding the edges
+    for u, v in edges: #including all the vertices in the graph by adding the edges
         temp1=vertex_cover[u]
         temp2=vertex_cover[v]
         if temp1+temp2== 0:
@@ -36,6 +45,7 @@ def fast_vc(graph, cutoff_time, random_seed):
             else:
                 ind=v
             vertex_cover[ind] = 1
+    # return_tr+=f"{time.time()-start_time}, {sum(vertex_cover)}\n"
     for u, v in edges: # changing loss values for vertices included in vertex_cover
         temp1=vertex_cover[u]
         temp2=vertex_cover[v]
@@ -44,7 +54,7 @@ def fast_vc(graph, cutoff_time, random_seed):
                 loss[v] += 1
             else:
                 loss[u] += 1
-    vertex_cover,graph,loss=removal_edges(graph,vertex_cover,loss)
+    vertex_cover,graph,loss=removal_edges(graph,vertex_cover,loss) #removing unecessary vertices from the graph
     for u in graph:
         for v in graph[u]:
             if u<v:
@@ -52,7 +62,8 @@ def fast_vc(graph, cutoff_time, random_seed):
             else:
                 ed.append((v,u))
     edges=set(ed)
-    calc,runtime=calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges)
+    # print("VC",sum(vertex_cover))
+    calc,runtime=calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges,return_tr)
     t=[]
     t=','.join([str(i + 1) for i in range(len(calc)) if calc[i] == 1]) #getting the list of vertices
     return [str(sum(calc)),t,runtime]
@@ -60,29 +71,33 @@ def run(filename, cutoff_time, random_seed):
     seed(random_seed)
     graph = read_graph(filename)
     return fast_vc(graph, cutoff_time, random_seed)
-def calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges):
+def calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges,return_tr):
     edges=list(edges)
-    curr_time = datetime.now()
+    curr_time = time.time()
     count=1
-    while curr_time - start_time < timedelta(seconds=cutoff_time):
+    while curr_time - start_time < cutoff_time:
         is_VC=True #validating if the candidate is a vertex cover
+       
         for u in graph:
             for v in graph[u]:
                 if vertex_cover[u] + vertex_cover[v] == 0:
                     is_VC =False
         if is_VC: 
             calc = [i for i in vertex_cover] #get the vertex with minimum loss and remove it
+            return_tr += f"{time.time()-start_time}, {sum(calc)}\n"
             l=[i for i in range(len(vertex_cover))]
-            min_loss = min(l,key=lambda i: 999999 if vertex_cover[i] == 0 else loss[i])
+            min_loss = min(l,key=lambda i: 999999 if vertex_cover[i] == 0 else loss[i]) #getting the vertex with min loss
             vertex_cover[min_loss] = 0
             gain[min_loss] = 0
             gain,loss=operation(graph,vertex_cover,min_loss,1,loss,gain)
+        # return_tr += f"{time.time()-start_time}, {sum(vertex_cover)}\n"
+#         print(f"{time.time()-start_time}, {sum(vertex_cover)}\n")
         indices=[]
         for i in range(len(vertex_cover)):
             if vertex_cover[i]==1:
                 indices.append(i)
         best_ind = indices[0]
-        for i in range(100): #picking vertex with minimum loss and removing it
+        for i in range(50): #picking vertex with minimum loss and removing it, we use 50 as a constant loop variable as suggested in the paper.
             ch = choice(indices)
             if loss[best_ind]>=loss[ch]:
                 best_ind=ch
@@ -104,15 +119,15 @@ def calculation(start_time,cutoff_time,graph,vertex_cover,gain,loss,edges):
                         flag=False
                         break
             first+=1
-        if (flag==False):
-                u = max(x, y, key=lambda x: gain[x])
+        if (flag==False): #an edge has been found that is uncovered
+                u = max(x, y, key=lambda x: gain[x]) #picking the most connected vertex based on the gain value
                 vertex_cover[u] = 1
                 gain,loss=operation(graph,vertex_cover,u,0,loss,gain) #update loss and gain after adding vertex
 
         
-        curr_time = datetime.now()
-    return calc,('{:0.2f}'.format((curr_time - start_time).total_seconds()))
-def read_graph(filename):
+        curr_time = time.time()
+    return calc,return_tr
+def read_graph(filename):  #read graph class
     graph = {}
     with open(filename, 'r') as file:
         file.readline()
@@ -126,7 +141,7 @@ def read_graph(filename):
 def operation(graph,vertex_cover,ind,val,loss,gain):
     # print(graph)
     if val==1:
-        for v in graph[ind]: #the loss and gain of all neighbors is assigned to min loss cause egdes are uncovered
+        for v in graph[ind]: #the loss and gain of all neighbors is assigned to min loss cause egdes are uncovered when vertex is removed
                 if vertex_cover[v] == 0:gain[v] += 1
                 else:loss[v] += 1
                     

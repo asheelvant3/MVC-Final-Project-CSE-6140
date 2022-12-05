@@ -1,3 +1,6 @@
+# Code to process the output files of local search algorithms 
+# and output mean time and vertex cover size
+
 import matplotlib.pyplot as plt
 import glob
 import numpy as np
